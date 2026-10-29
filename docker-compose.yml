@@ -1,16 +1,14 @@
-version: '3.8'
-
 services:
   backend:
     build:
       context: ../backend
       dockerfile: Dockerfile
     image: arinamalygina/backend:2.0
-    container_name: devops_backend
-    networks:
-      - devops_network
+    container_name: devops-backend
     volumes:
-      - ./backend_data:/app
+      - data-volume:/app
+    networks:
+      - devops-net
     restart: always
 
   frontend:
@@ -18,15 +16,19 @@ services:
       context: ../frontend
       dockerfile: Dockerfile
     image: arinamalygina/frontend:2.0
-    container_name: devops_frontend
+    container_name: devops-frontend
     ports:
       - "8080:80"
-    networks:
-      - devops_network
     depends_on:
       - backend
+    networks:
+      - devops-net
     restart: always
 
+volumes:
+  data-volume:
+    driver: local
+
 networks:
-  devops_network:
+  devops-net:
     driver: bridge
